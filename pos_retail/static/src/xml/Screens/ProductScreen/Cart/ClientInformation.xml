@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-name="ClientInformation" owl="1">
+        <div class="summary clearfix">
+            <table class='summary-table'>
+                <colgroup>
+                    <col width='33%'/>
+                    <col width='33%'/>
+                    <col width='34%'/>
+                </colgroup>
+                <tr style="background:gray; color: #fff" class="receipt-line">
+                    <th style="text-align: center; padding: 10px">Name</th>
+                    <th style="text-align: center; padding: 10px">Points</th>
+                    <th style="text-align: center; padding: 10px">Credits</th>
+                    <th style="text-align: center; padding: 10px">Wallets</th>
+                    <th style="text-align: center; padding: 10px">Purchased Orders</th>
+                    <th style="text-align: center; padding: 10px">Purchased Amount</th>
+                </tr>
+                <tr class="receipt-line">
+                    <td style="text-align: center">
+                        <t t-esc="props.partner.display_name"/>
+                    </td>
+                    <td style="text-align: center">
+                        <t t-esc="env.pos.format_currency_no_symbol(props.partner.pos_loyalty_point)"/>
+                        <i class="fa fa-cart-plus" t-on-click="usePointsDoPayment"
+                           style="font-size: 16px; color: blue;padding: 5px;background: #fff;border-radius: 5px;cursor: pointer"
+                           t-if="props.partner.pos_loyalty_point &gt; 0"/>
+                    </td>
+                    <td style="text-align: center">
+                        <t t-esc="env.pos.format_currency_no_symbol(props.partner.balance)"/>
+                        <i class="fa fa-cart-plus" t-on-click="useCreditsDoPayment"
+                           style="font-size: 16px; color: blue;padding: 5px;background: #fff;border-radius: 5px;cursor: pointer"
+                           t-if="props.partner.balance &gt; 0"/>
+                    </td>
+                    <td style="text-align: center">
+                        <t t-esc="env.pos.format_currency_no_symbol(props.partner.wallet)"/>
+                        <i class="fa fa-cart-plus" t-on-click="useWalletsDoPayment"
+                           style="font-size: 16px; color: blue;padding: 5px;background: #fff;border-radius: 5px;cursor: pointer"
+                           t-if="props.partner.wallet &gt; 0"/>
+                    </td>
+                    <td style="text-align: center">
+                        <t t-esc="env.pos.format_currency_no_symbol(props.partner.pos_order_count)"/>
+                        <i class="fa fa-book" t-on-click="showPurchasedHistories"
+                           style="font-size: 16px; color: blue;padding: 5px;background: #fff;border-radius: 5px;cursor: pointer"
+                           t-if="props.partner.pos_order_count &gt; 0 and env.pos.config.pos_orders_management"/>
+                    </td>
+                    <td>
+                        <t t-esc="env.pos.format_currency(props.partner.pos_total_amount)"/>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+    </t>
+
+</templates>

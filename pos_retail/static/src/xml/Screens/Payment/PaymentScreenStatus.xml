@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-name="PaymentScreenStatus" t-inherit="point_of_sale.PaymentScreenStatus" t-inherit-mode="extension" owl="1">
+        <xpath expr="//div[hasclass('total')]" position="before">
+            <div class="payment-status-container" t-if="!env.isMobile">
+                <div class="payment-status-total-due">
+                    <span class="label">Points</span>
+                    <span class="amount">
+                        <t t-esc="env.pos.format_currency(Client.pos_loyalty_point)"/>
+                    </span>
+                </div>
+                <div class="payment-status-total-due">
+                    <span class="label">Credit</span>
+                    <span class="amount">
+                        <t t-esc="env.pos.format_currency(Client.balance)"/>
+                    </span>
+                </div>
+                <div class="payment-status-total-due">
+                    <span class="label">Wallet</span>
+                    <span class="amount">
+                        <t t-esc="env.pos.format_currency(Client.wallet)"/>
+                    </span>
+                </div>
+            </div>
+        </xpath>
+        <xpath expr="//div[hasclass('payment-status-change')]" position="after">
+            <t t-if="Client and !env.isMobile">
+                <div class="payment-status-total-due">
+                    <span class="label">Points</span>
+                    <span class="amount">
+                        <t t-esc="env.pos.format_currency(Client.pos_loyalty_point)"/>
+                    </span>
+                </div>
+                <div class="payment-status-total-due">
+                    <span class="label">Credit</span>
+                    <span class="amount">
+                        <t t-esc="env.pos.format_currency(Client.balance)"/>
+                    </span>
+                </div>
+                <div class="payment-status-total-due">
+                    <span class="label">Wallet</span>
+                    <span class="amount">
+                        <t t-esc="env.pos.format_currency(Client.wallet)"/>
+                    </span>
+                </div>
+            </t>
+        </xpath>
+    </t>
+
+</templates>

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-name="KitchenOrderSelected" owl="1">
+        <div class="kitchen-box full_box">
+            <div class="ribbon">
+                <span class="kitchen_box_state" t-att-class="props.order.state">
+                    <t t-esc="props.order.state"/>
+                </span>
+            </div>
+            <div class="pos-receipt-order-data">
+                <span class="open_order" t-on-click="openOrder" t-if="env.pos.config.screen_type != 'kitchen'">
+                    <i class="fa fa-shopping-cart"/> View Cart
+                </span>
+            </div>
+            <div class="pos-receipt-title product-name">
+                <t t-esc="props.order.name"/>
+                <t t-if="props.order.floor and props.order.table">
+                    :
+                    <t t-esc="props.order.floor"/>
+                    /
+                    <t t-esc="props.order.table"/>
+                </t>
+            </div>
+            <div class="pos-receipt-title product-name" t-if="props.order.priority">
+                <span class="warning_box" t-if="props.order.priority">High Priority</span>
+            </div>
+            <div class="pos-receipt-title">
+                Total Items : <span class="notification"><t t-esc="props.order.total_items"/></span>
+            </div>
+            <div class="pos-receipt-title">
+                Ready Transfer Items : <span class="ready_notification"><t t-esc="props.order.ready_transfer_items"/></span>
+            </div>
+            <div class="buttons">
+                <span class="btn btn-default highlight"
+                        t-on-click="trigger('click-deliveryAll', {order: props.order})"
+                        t-if="env.pos.config.screen_type == 'kitchen' and props.order.state != 'Done'">
+                    <t t-if="props.order.state != 'Removed' and props.order.state != 'Paid'">
+                        <i class="fa fa-cutlery "/>
+                        <t> Delivery All Items</t>
+                    </t>
+                    <t t-else="">
+                        <i class="fa fa-trash "/>
+                        <t> Remove</t>
+                    </t>
+                </span>
+                <span class="btn btn-default" t-on-click="printOrder"
+                        t-if="env.pos.config.screen_type !== 'kitchen' and props.order.state != 'Removed' and props.order.state != 'Paid'">
+                    <i class="fa fa-print "/>
+                    Print KOT
+                </span>
+                <span class="btn btn-default"
+                        t-att-class="{oe_hidden: isHiddenTransferItems, highlight: needTransfer}"
+                        t-on-click="trigger('click-transferItems', {order: props.order})"
+                        t-if="env.pos.config.screen_type != 'kitchen' and !['Removed', 'Paid'].includes(props.order.state)">
+                    <i class="fa fa-cutlery"/>
+                    Transfer Items
+                </span>
+                <span class="btn btn-default" t-on-click="trigger('click-setPriority', {order: props.order})"
+                        t-att-class="{oe_hidden: invisiblePriority, highlight: isPriority}">
+                    <i class="fa fa-bell-o"/>
+                    Priority
+                </span>
+                <span class="btn btn-default" t-on-click="sync">
+                    <i class="fa fa-refresh"/>
+                    ReSend
+                </span>
+            </div>
+            <div class="card-content subwindow-container-fix scrollable-y" style="height: 70%">
+                <div class="table-responsive">
+                    <table class="table-striped">
+                        <tbody>
+                            <tr style="height: 5px; border-bottom: 5px solid gray">
+                                <td class="text-center" style="width: 5%"
+                                    t-if="env.pos.config.screen_type == 'kitchen'"></td>
+                                <td class="text-left" style="width: 90%"></td>
+                                <td class="text-right" style="width: 5%"
+                                    t-if="env.pos.config.screen_type == 'kitchen'"></td>
+                            </tr>
+                            <t t-foreach="props.order['cancelled'] || []" t-as="line" t-key="line.uid + count">
+                                <KitchenOrderLine line="line" order="props.order"/>
+                            </t>
+                            <t t-foreach="props.order['new'] || []" t-as="line" t-key="line.uid + count">
+                                <KitchenOrderLine line="line" order="props.order"/>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </t>
+
+</templates>

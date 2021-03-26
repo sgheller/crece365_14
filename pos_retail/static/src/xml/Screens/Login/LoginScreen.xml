@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-name="TableWidget" t-inherit="pos_hr.LoginScreen" t-inherit-mode="extension" owl="1">
+        <xpath expr="//div[hasclass('login-overlay')]" position="inside">
+            <div id="livestream_scanner">
+                <div id="interactive" class="viewport"></div>
+                <div class="error"></div>
+            </div>
+        </xpath>
+        <xpath expr="//button[hasclass('select-employee')]" position="inside">
+            <i class="fa fa-sign-in" style="font-size: 30px"/>
+            <span style="display: block;  padding: 5px; color: black">
+                <i class="fa fa-keyboard-o"/>
+                <span>  </span>
+                Enter
+            </span>
+        </xpath>
+        <xpath expr="//button[hasclass('close-session')]" position="inside">
+            <span style="display: block;  padding: 5px; color: black">
+                <i class="fa fa-sign-out" style="font-size: 30px"/>
+                <i class="fa fa-keyboard-o"/>
+                <span>  </span>
+                ESC
+            </span>
+        </xpath>
+    </t>
+
+</templates>

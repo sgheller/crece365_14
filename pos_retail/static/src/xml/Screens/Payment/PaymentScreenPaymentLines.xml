@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-name="PaymentScreenPaymentLines" t-inherit="point_of_sale.PaymentScreenPaymentLines" t-inherit-mode="extension"
+       owl="1">
+        <xpath expr="//div[hasclass('payment-name')]" position="after">
+            <div class="payment-name"
+                 t-if="env.pos.config.payment_reference"
+                 t-on-click="trigger('reference-payment-line', { cid: line.cid })"
+                 aria-label="Set Reference" title="Set Reference">
+                <i class="fa fa-edit"/>
+                <t t-if="line.ref">
+                    Ref: <t t-esc="line.ref"/>
+                </t>
+                <t t-else="">
+                    Ref:
+                </t>
+             </div>
+            <div class="payment-name"
+                 t-if="line.payment_method.cheque_bank_information"
+                 t-on-click="trigger('cheque-tracking-payment-line', { cid: line.cid })"
+                 aria-label="Set Cheque Number" title="Set Cheque Number">
+                <i class="fa fa-bank"/>
+                <t t-if="line.cheque_check_number">
+                    Cheque No: <t t-esc="line.cheque_check_number"/>
+                </t>
+             </div>
+            <div class="payment-name"
+                 t-if="line.voucher_code"
+                 aria-label="Voucher Code" title="Voucher Code">
+                <i class="fa fa-gift"/>
+                <span> Voucher </span>
+                <t t-esc="line.voucher_code"/>
+             </div>
+        </xpath>
+        <xpath expr="//div[hasclass('delete-button')]" position="inside">
+            <span> </span>
+            <span t-if="env.isShowKeyBoard">
+                <i class="fa fa-keyboard-o"/>
+                R
+            </span>
+        </xpath>
+        <xpath expr="//div[hasclass('payment-amount')]" position="replace">
+            <div class="payment-amount">
+                <t t-if="line and line.payment_status and ['done', 'waitingCard', 'waiting', 'reversing', 'reversed'].includes(line.payment_status)">
+                        <t t-esc="env.pos.format_currency(line.get_amount())"/>
+                </t>
+                <t t-else="">
+                        <t t-esc="formatLineAmount(line)"/>
+                </t>
+            </div>
+        </xpath>
+    </t>
+
+</templates>

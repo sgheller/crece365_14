@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-name="PaymentMethodButton" t-inherit="point_of_sale.PaymentMethodButton" t-inherit-mode="extension" owl="1">
+        <xpath expr="//div[hasclass('payment-name')]" position="replace">
+            <i class="fa fa-credit-card" aria-hidden="true"></i>
+            <span class="payment-name">
+                <t t-esc="props.paymentMethod.name" />
+            </span>
+            <span class="payment-name" t-if="props.paymentMethod.journal and props.paymentMethod.journal.currency_id" style="text-align: right">
+                <t t-esc="props.paymentMethod.journal.currency_id[1]" />
+            </span>
+            <span class="payment-name" t-if="props.paymentMethod.shortcut_keyboard" style="float: right">
+                <span  t-if="env.isShowKeyBoard">
+                    <i class="fa fa-keyboard-o"/> <t t-esc="props.paymentMethod.shortcut_keyboard"/>
+                </span>
+            </span>
+            <span class="payment-name" t-if="props.paymentMethod.is_pax and props.paymentMethod.pax_id" style="text-align: right">
+                PAX: <t t-esc="props.paymentMethod.pax_id[1]"/>
+                <i class="fa fa-retweet"/>
+            </span>
+        </xpath>
+    </t>
+
+</templates>

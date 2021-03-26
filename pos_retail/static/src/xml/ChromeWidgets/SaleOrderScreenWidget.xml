@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-name="SaleOrderScreenWidget" owl="1">
+        <div class="ticket-button sale-orders-header-button" t-att-class="{ oe_hidden: isHidden}" t-on-click="onClick">
+            <div class="with-badge" t-att-badge="count">
+                <i class="fa fa-desktop" aria-hidden="true"></i>
+            </div>
+            <div t-if="!env.isMobile" class="header-text">Sale/Reservation Orders</div>
+            <span class="keyboard-header" t-if="env.isShowKeyBoard"> <i class="fa fa-keyboard-o"/>
+                F10 </span>
+        </div>
+    </t>
+
+</templates>

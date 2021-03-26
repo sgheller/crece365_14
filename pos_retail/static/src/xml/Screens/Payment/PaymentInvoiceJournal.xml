@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-name="PaymentInvoiceJournal" owl="1">
+        <div class="button paymentmethod"
+             t-att-class="{highlight: isSelected}"
+             t-on-click="trigger('click-journal', props.paymentInvoiceJournal)">
+            <div class="payment-name">
+                <t t-esc="props.paymentInvoiceJournal.name" />
+            </div>
+        </div>
+    </t>
+
+</templates>

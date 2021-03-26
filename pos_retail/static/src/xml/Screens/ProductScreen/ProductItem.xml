@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-name="ProductName" owl="1">
+        <span class="product-line-name"
+              t-att-class="{'price-down': props.out_stock and props.product['type'] == 'product',}"
+              style="display: block">
+            <t t-esc="props.product.display_name"/>
+            <t t-if="props.product.name_second and env.pos.config.display_product_second_name">
+                <t t-esc="props.product.name_second"/>
+            </t>
+        </span>
+    </t>
+
+    <t t-name="ProductOnHand" owl="1">
+        <t t-set="stock_location" t-value="env.pos.get_picking_source_location()"/>
+        <t t-if="props.product['type'] == 'product'">
+            <span class="qty_available"
+                  t-att-class="{'price-down': props.out_stock}"
+                  title="Available Quantity in Stock">
+                <span>
+                    <t t-if="state.refreshStock">
+                        <i class="fa fa-spin fa-spinner fa-pulse"/>
+                    </t>
+                    <t t-if="props.out_stock">
+                        <span class="taxes-label">
+                            Out of Stock
+                        </span>
+                    </t>
+                    <t t-else="">
+                        <span class="taxes-label">
+                            Available Stock
+                        </span>
+                    </t>
+                    <t t-if="!state.refreshStock and props.product.qty_available &gt; 0 or props.product.qty_available &lt; 0">
+                        <span class="notification" t-if="props.product.qty_available &lt; 0" style="background:red">
+                            <t t-esc="props.product.qty_available.toFixed(0)"/>
+                        </span>
+                        <span class="notification" t-if="props.product.qty_available &gt; 0">
+                            <t t-esc="props.product.qty_available.toFixed(0)"/>
+                        </span>
+                    </t>
+                    <t t-else="">
+                        <span class="notification">
+                            0
+                        </span>
+                    </t>
+                </span>
+                <t t-if="props.product.tracking!=='none'">
+                    <i class="oe_link_icon fa fa-list oe_icon line-lot-icon"></i>
+                </t>
+            </span>
+        </t>
+        <t t-else="">
+            <span></span>
+        </t>
+    </t>
+
+    <t t-name="RetailProductItem" owl="1">
+        <t t-set="product" t-value="props.product"/>
+        <t t-if="env.pos.config.product_view == 'list'">
+            <tr class='product-list'
+                t-att-class="{
+                        'oe_hidden': disableSale,
+                     }"
+                tabindex="0"
+                t-on-keypress="spaceClickProduct"
+                t-att-data-product-id="product.id"
+                t-attf-aria-labelledby="article_product_{{product.id}}"
+            >
+                <td class="text-left product-name-list">
+                    <ProductName product="product"/>
+                    <button style="display: inline-block" class="edit-client-button"
+                            t-on-click.stop="trigger('click-product', product)">
+                        <i class="fa fa-shopping-cart"/>
+                        Add to Cart
+                    </button>
+                    <button class="edit-client-button" t-on-click.stop="editProduct"
+                            t-if="env.pos.config.allow_edit_product and !env.isMobile">
+                        <i class="fa fa-edit"/>
+                    </button>
+                </td>
+                <td class="text-center">
+                    <t t-if="product['default_code']">
+                        <t t-esc="product['default_code']"/>
+                    </t>
+                    <t t-else="">
+                        N/A
+                    </t>
+                </td>
+                <td class="text-center">
+                    <t t-if="product['barcode']">
+                        <t t-esc="product['barcode']"/>
+                    </t>
+                    <t t-else="">
+                        N/A
+                    </t>
+                    <t t-if="product.barcode">
+                        <button class="edit-client-button" t-on-click.stop="printBarcode">
+                            <i class="fa fa-print"/>
+                        </button>
+                    </t>
+                    <t t-else="">
+                        <button class="edit-client-button" t-on-click.stop="addBarcode">
+                            <i class="fa fa-barcode"/>
+                        </button>
+                    </t>
+                </td>
+                <td class="text-right">
+                    <span class="price">
+                        <t t-esc="price"/>
+                    </span>
+                </td>
+                <td class="text-right">
+                    <t t-if="env.pos.config.display_onhand">
+                        <ProductOnHand product="product" out_stock="out_stock"/>
+                    </t>
+                    <button class="edit-client-button" t-on-click.stop="doUpdateOnHand"
+                            t-if="product['type'] != 'service' and product['tracking'] != 'serial' and env.pos.config.update_stock_onhand and !env.isMobile">
+                        <i class="fa fa-fw fa-cubes"/>
+                        Update Stock
+                    </button>
+                    <button class="edit-client-button" t-on-click.stop="archiveProduct"
+                            t-if="env.pos.config.allow_remove_product and !env.isMobile">
+                        <i class="fa fa-trash"/>
+                        Archive
+                    </button>
+                </td>
+            </tr>
+        </t>
+        <t t-else="">
+            <t t-set="product_image_size" t-value="env.pos.config.product_image_size"/>
+            <article class='product'
+                     tabindex="0"
+                     t-on-mouseover="_onMouseEnter" t-on-mouseout="_onMouseLeave"
+                     t-att-class="{
+                            'oe_hidden': disableSale,
+                         }"
+                     t-on-keypress="spaceClickProduct"
+                     t-on-click="trigger('click-product', props.product)"
+                     t-att-data-product-id="props.product.id"
+                     t-attf-aria-labelledby="article_product_{{props.product.id}}"
+            >
+<!--                <ProductDetail product="product" t-if="product.isShowDetail and env.pos.config.display_product_detail" price="price"/>-->
+                <t t-set="out_stock"
+                   t-value="product.qty_available == 0 or !product.qty_available or product.qty_available &lt; 0"/>
+                <t t-if="!env.pos.config.hide_product_image">
+                    <t t-if="product_image_size == 'big'">
+                        <div class="product-img-big">
+                            <img t-att-src="imageUrl" t-att-alt="props.product.display_name"/>
+                        </div>
+                    </t>
+                    <t t-if="product_image_size == 'small'">
+                        <div class="product-img-small">
+                            <img t-att-src="imageUrl" t-att-alt="props.product.display_name"/>
+                        </div>
+                    </t>
+                    <t t-if="product_image_size == 'default'">
+                        <div class="product-img">
+                            <img t-att-src="imageUrl" t-att-alt="props.product.display_name"/>
+                        </div>
+                    </t>
+                </t>
+                <t t-if="product.pos_sequence">
+                    <span class="product_sequence">
+                        Sequence: <t t-esc="product.pos_sequence"/>
+                    </span>
+                </t>
+                <span class="price-tag">
+                    <span class="price-down" t-if="product['difference_price']">
+                        <t t-esc="env.pos.format_currency_no_symbol(product.base_price)"/>
+                    </span>
+                    <t t-esc="price"/>
+                    <span class="cart_qty" t-if="itemInCart and !env.isMobile">
+                       <i class='fa fa-shopping-cart'/>
+                        <span class="add_shopping_cart"><t t-esc="itemInCart"/></span>
+                    </span>
+                </span>
+                <t t-if="env.pos.config.display_onhand">
+                    <t t-if="product['type'] == 'product'">
+                        <t t-set="warning_out_stock"
+                           t-value="product.qty_available - product.qty_warning_out_stock"/>
+                        <!--                        <t t-if="out_stock">-->
+                        <!--                             <div class="ribbon"><span style="background: #FF5722">Out Stock</span></div>-->
+                        <!--                        </t>-->
+                        <t t-if="!out_stock and warning_out_stock &lt; 0">
+                            <div class="ribbon"><span style="background: #FF5722">Limit Stock</span></div>
+                        </t>
+                    </t>
+                </t>
+                <t t-if="product.is_combo">
+                    <div class="ribbon"><span>Combo Bundle/Pack</span></div>
+                </t>
+                <t t-if="product.is_credit">
+                    <div class="ribbon"><span>Credit</span></div>
+                </t>
+                <t t-if="product.multi_uom">
+                    <div class="ribbon"><span>Multi Unit</span></div>
+                </t>
+                <t t-if="product.multi_variant">
+                    <div class="ribbon"><span>Multi Variants</span></div>
+                </t>
+                <t t-if="product.cross_selling">
+                    <div class="ribbon"><span>Cross Selling</span></div>
+                </t>
+                <t t-if="product.is_voucher">
+                    <div class="ribbon"><span>Voucher</span></div>
+                </t>
+                <span class="qty-soldout" t-if="env.pos.productsTopSelling and env.pos.productsTopSelling[product.id]">
+                    <i class="fa fa-certificate"
+                       style="background: #6EC89B; color: #fff; padding: 5px; border-radius: 5px; font-size: 16px"/>
+                    <t t-esc="env.pos.productsTopSelling[product.id]"/>
+                </span>
+                <div class="product-name">
+                    <t t-if="env.pos.config.display_onhand">
+                        <ProductOnHand product="product" out_stock="out_stock"/>
+                    </t>
+                    <t t-if="env.pos.get_count_variant(product.product_tmpl_id) and env.pos.get_count_variant(product.product_tmpl_id).length > 1">
+                        <div class="taxes-label">
+                            Variants:
+                        </div>
+                        <span class="notification">
+                            <t t-esc="env.pos.get_count_variant(product.product_tmpl_id).length"/>
+                        </span>
+                    </t>
+                    <t t-if="env.pos.config.display_product_ref">
+                        <ProductName product="product"/>
+                        <t t-if="product['default_code']">
+                            [ <t t-esc="product['default_code']"/>
+                            ]
+                        </t>
+                        <t t-if="env.pos.config.display_cost_price">
+                             [ Cost: <t t-esc="env.pos.format_currency(product.standard_price, 'Product Price')"/>
+                            ]
+                        </t>
+                        <span class="sale_with_package" t-if="env.pos.get_packaging_by_product(product)">
+                            <img src="/pos_retail/static/src/icons/box_packaging.png" class="logo_size"/>
+                        </span>
+                    </t>
+                    <t t-if="!env.pos.config.display_product_ref">
+                        <ProductName product="product" out_stock="out_stock"/>
+                        <t t-if="env.pos.config.display_cost_price">
+                            [ Cost: <t t-esc="env.pos.format_currency(product.standard_price, 'Product Price')"/>]
+                        </t>
+                    </t>
+                    <t t-set="units" t-value="env.pos.get_units_barcode_by_id(product.id)"/>
+                    <t t-if="units.length">
+                        (Multi Barcodes)
+                    </t>
+                    <t t-set="taxes" t-value="env.pos.get_taxes(product)"/>
+                    <t t-if="taxes.length">
+                        <t t-foreach='taxes' t-as='tax' t-key="tax.id">
+                            <div class="taxes-label"><t t-esc="tax.name"/></div>
+                        </t>
+                    </t>
+                </div>
+            </article>
+        </t>
+    </t>
+
+</templates>

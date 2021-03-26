@@ -1,0 +1,21 @@
+body .pos-customer_facing_display:before {
+    height: 0px !important;
+}
+body .pos-customer_facing_display .pos-customer_products {
+    padding-top: 0px !important;
+}
+
+body .pos-customer_facing_display .pos-payment_info .pos-company_logo >img {
+    width: 100%;
+    margin: 1vh;
+    left: 1vh;
+    max-height: 18vh;
+    max-width: 37vh;
+    margin-left: -1.8vh;
+}
+body .pos-customer_facing_display .pos-payment_info .pos-payment_info_details .pos-odoo_logo_container {
+    display: none;
+}
+body .pos-customer_facing_display .pos-payment_info {
+    background: #3c4858;
+}

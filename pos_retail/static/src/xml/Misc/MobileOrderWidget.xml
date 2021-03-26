@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-name="MobileOrderWidget" t-inherit="point_of_sale.MobileOrderWidget" t-inherit-mode="extension" owl="1">
+        <xpath expr="//h1[1]" position="replace">
+            <t t-if="env.pos.session.restaurant_order">
+                <h1 style="line-height: 1.0em !important; font-size: 20px"><i class="fa fa-cutlery"/> Place Order</h1>
+            </t>
+            <t t-else="">
+                <h1 style="line-height: 1.0em !important; font-size: 20px"><i class="fa fa-cutlery"/> Pay</h1>
+            </t>
+        </xpath>
+        <xpath expr="//button[2]" position="replace">
+            <button class="btn-switchpane secondary" t-on-click="trigger('switchpane')">
+                <h1><i class="fa fa-shopping-cart"/> Review</h1>
+                <span class="notification"><t t-esc="items_number"/></span> (items)
+            </button>
+        </xpath>
+    </t>
+
+</templates>

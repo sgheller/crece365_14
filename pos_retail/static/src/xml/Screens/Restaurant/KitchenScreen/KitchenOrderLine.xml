@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-name="KitchenOrderLine" owl="1">
+        <tr class="kot_line"
+            t-att-class="{ highlight: isHighlighted, oe_hidden: !allowDisplay, Cancelled: isCancelled, succeed_box: isSucceed}"
+            t-on-click="trigger('click-setSelectedLine', {line: props.line, order: props.order})">
+            <td class="text-left" t-if="env.pos.config.screen_type == 'kitchen'">
+                <span class="btn btn-warning"
+                      style="padding: 20px"
+                      t-if="['New', 'Priority'].includes(props.line.state)"
+                      t-on-click="trigger('click-doneLine', {line: props.line, order: props.order})"
+                      title="Set Done">
+                    <i class='fa fa-cutlery'/>
+                </span>
+            </td>
+            <td class="text-left" style="padding: 10px">
+                <ul class="product-name">
+                    <t t-esc="props.line.name"/>
+                    <span style="float: right; margin-right: 10px">
+                        <span> x </span>
+                        <t t-esc="props.line.qty"/>
+                        <t t-if="props.line.uom and props.line.uom.name != 'Units'">
+                            ( <t t-esc='props.line.uom.name'/>
+                            )
+                        </t>
+                    </span>
+                </ul>
+                <ul class="info" t-if="props.line.state" style="margin-left: 0px">
+                    <span class="info line-state"
+                          t-att-class="{warning_line: props.line.state == 'Kitchen Requesting Cancel'}">
+                        State: <t t-esc="props.line.state"/>
+                    </span>
+                </ul>
+                <t t-if="props.line.tags and props.line.tags.length">
+                    <ul class="info">
+                        Tags:
+                    </ul>
+                    <t t-foreach="props.line.tags" t-as="tag" t-key="tag.id">
+                        <ul class="sub_info">
+                            <i class="fa fa-caret-right"/>
+                            <t t-esc="tag.name"/>
+                        </ul>
+                    </t>
+                </t>
+                <t t-if="props.line.note">
+                    <ul class="info">
+                        Note: <t t-esc="props.line.note"/>
+                    </ul>
+                </t>
+                <t t-if="props.line.qty_cancelled and props.line.state != 'Done'">
+                    <ul class="info">
+                        Quantity Cancelled : - <t t-esc="props.line.qty_cancelled"/>
+                    </ul>
+                </t>
+                <t t-if="props.line.qty_requested and props.line.state != 'Done'">
+                    <ul class="info" style="font-weight: 900; line-height: 35px; font-size: 16px">
+                        <t t-if="['New', 'Priority'].includes(props.line.state)">
+                            Quantity Requested :
+                        </t>
+                        <t t-else="">
+                            Quantity Delivery :
+                        </t>
+                        <span class="notification qty_requested"><t t-esc="props.line.qty_requested"/></span>
+                    </ul>
+                </t>
+                <t t-if="props.line.combo_items and props.line.combo_items.length">
+                    <ul class="info">
+                        Combo Items:
+                    </ul>
+                    <t t-foreach="props.line.combo_items" t-as="combo_item" t-key="combo_item.product_id[0]">
+                        <ul class="sub_info">
+                            + <t t-esc="combo_item.product_id[1]"/>
+                            with qty :
+                            <t t-esc="combo_item.quantity"/>
+                        </ul>
+                    </t>
+                </t>
+                <t t-if="props.line.selected_combo_items and props.line.selected_combo_items.length">
+                    <ul class="info">
+                        Selected Combo Items:
+                    </ul>
+                    <t t-foreach="props.line.selected_combo_items" t-as="combo_item" t-key="combo_item.id">
+                        <ul class="sub_info">
+                            <t t-if="combo_item['quantity']">
+                                + <t t-esc="combo_item['quantity']"/>
+                                <t t-esc="combo_item['product_name']"/>
+                            </t>
+                        </ul>
+                    </t>
+                </t>
+                <t t-if="props.line.variants and props.line.variants.length">
+                    <ul class="info">
+                        Variants and Attributes:
+                    </ul>
+                    <t t-foreach="props.line.variants" t-as="variant" t-key="variant.id">
+                        <ul class="info">
+                            <t t-esc="variant.attribute_id[1]"/>
+                            <t t-esc="variant.value_id[1]"/>
+                        </ul>
+                    </t>
+                </t>
+            </td>
+            <td class="text-right"
+                t-if="env.pos.config.allow_kitchen_cancel and env.pos.config.screen_type == 'kitchen' and props.line.state != 'Cancelled'">
+                <span class="btn btn-danger"
+                      style="padding: 20px"
+                      t-if="['New', 'Priority'].includes(props.line.state)"
+                      t-on-click="trigger('click-cancelLine', {line: props.line, order: props.order})"
+                      title="Cancel">
+                    <i class="fa fa-trash"/>
+                </span>
+            </td>
+        </tr>
+    </t>
+
+</templates>
